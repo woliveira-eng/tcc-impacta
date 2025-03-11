@@ -1,0 +1,25 @@
+{% extends 'tasks/base.html' %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+    <h1 class="text-3xl font-bold mb-6">To-Do List</h1>
+    <a href="{% url 'task_create' %}" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Add New Task</a>
+    <ul class="mt-6 space-y-4">
+        {% for task in tasks %}
+        <li class="flex items-center justify-between bg-gray-50 p-4 rounded-lg shadow-sm transform transition-transform duration-200 hover:scale-105">
+            <div>
+                <a href="{% url 'task_detail' task.pk %}" class="text-lg font-semibold hover:text-blue-500">{{ task.title }}</a>
+                <p class="text-gray-600">{{ task.description|truncatechars:50 }}</p>
+            </div>
+            <div class="flex space-x-2">
+                <a href="{% url 'task_update' task.pk %}" class="bg-yellow-500 text-white px-3 py-1 rounded-lg hover:bg-yellow-600">Edit</a>
+                <form action="{% url 'task_delete' task.pk %}" method="post" onsubmit="return confirmDelete(event)">
+                    {% csrf_token %}
+                    <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600">Delete</button>
+                </form>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
