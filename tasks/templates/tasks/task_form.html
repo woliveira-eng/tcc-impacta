@@ -1,27 +1,26 @@
-{% extends 'tasks/base.html' %}
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-<div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-lg">
-    <h1 class="text-3xl font-bold mb-6">{% if form.instance.pk %}Edit Task{% else %}Create Task{% endif %}</h1>
-    <form method="post" class="space-y-4" id="task-form">
-        {% csrf_token %}
-        <div class="space-y-2">
-            <div>
-                <label for="id_title" class="block text-sm font-medium text-gray-700">Title</label>
-                <input type="text" name="title" id="id_title" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" value="{{ form.title.value|default:'' }}">
-                <p id="title-error" class="text-red-500 text-sm mt-1 hidden">Title is required.</p>
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">
+                    {% if form.instance.pk %}Edit Task{% else %}Create New Task{% endif %}
+                </h4>
             </div>
-            <div>
-                <label for="id_description" class="block text-sm font-medium text-gray-700">Description</label>
-                <textarea name="description" id="id_description" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">{{ form.description.value|default:'' }}</textarea>
-            </div>
-            <div>
-                <label for="id_completed" class="block text-sm font-medium text-gray-700">Completed</label>
-                <input type="checkbox" name="completed" id="id_completed" class="mt-1 block" {% if form.completed.value %}checked{% endif %}>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
+                        <button type="submit" class="btn btn-primary me-md-2">Save</button>
+                        <a href="{% url 'task_list' %}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
             </div>
         </div>
-        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Save</button>
-        <a href="{% url 'task_list' %}" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">Cancel</a>
-    </form>
+    </div>
 </div>
 {% endblock %}

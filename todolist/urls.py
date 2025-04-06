@@ -16,8 +16,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.auth import views as auth_views
+from django.views.generic.base import RedirectView
+from django.views.generic.base import TemplateView
+
 
 urlpatterns = [
+    path('accounts/login/', RedirectView.as_view(url='/login', permanent=True)),
+    path('accounts/logout/', RedirectView.as_view(url='/logout/', permanent=True)),
     path('admin/', admin.site.urls),
+    path('accounts/', include('django.contrib.auth.urls')),
     path('', include('tasks.urls')),
+    path('signup/', TemplateView.as_view(template_name='registration/signup.html'), name='signup'),
 ]
