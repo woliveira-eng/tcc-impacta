@@ -1,11 +1,23 @@
+import logging
+from datetime import datetime
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from .models import Task
 from .forms import CustomUserCreationForm, CustomAuthenticationForm,TaskForm
+from django.http import HttpResponse
+from tablib import Dataset
+from .resources import TaskResource
+import json
+from reportlab.pdfgen import canvas
+from io import BytesIO
+from django.contrib import messages
+from django.db import transaction
 
 # Create your views here.
+
+logger = logging.getLogger(__name__)
 
 def task_list(request):
     tasks = Task.objects.all()
@@ -82,3 +94,38 @@ def user_logout(request):
 def task_list(request):
     tasks = Task.objects.filter(user=request.user)
     return render(request, 'tasks/task_list.html', {'tasks': tasks})
+
+@login_required
+def export_tasks(request, format):
+    """Export with versioning"""
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    task_resource = TaskResource()
+    dataset = task_resource.export(request.user.task_set.filter(is_active=True))
+    
+    # Generate filename with username and timestamp
+    filename = f"tasks_{request.user.username}_{timestamp}"
+    
+    if format == 'csv':
+        response = HttpResponse(dataset.csv, content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="{filename}.csv"'
+    elif format == 'json':
+        response = HttpResponse(dataset.json, content_type='application/json')
+        response['Content-Disposition'] = f'attachment; filename="{filename}.json"'
+    elif format == 'pdf':
+        # PDF generation code with version info
+        buffer = BytesIO()
+        p = canvas.Canvas(buffer)
+        p.drawString(100, 800, f"Task Export - {filename}")
+        y = 750
+        for task in request.user.task_set.filter(is_active=True):
+            y -= 20
+            p.drawString(100, y, f"{task.title} - {'Completed' if task.completed else 'Pending'}")
+        p.showPage()
+        p.save()
+        pdf = buffer.getvalue()
+        buffer.close()
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{filename}.pdf"'
+    
+    return response
+

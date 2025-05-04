@@ -51,3 +51,5 @@ class CustomAuthenticationForm(AuthenticationForm):
             Field('password', css_class='form-control'),
             Submit('submit', 'Login', css_class='btn btn-primary w-100 mt-3')
         )
+
+

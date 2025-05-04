@@ -1,1 +1,26 @@
-django
+# Core
+Django>=3.2
+django-crispy-forms
+crispy-bootstrap5
+
+# Database
+psycopg2-binary  # Optional for PostgreSQL
+mysqlclient  # Optional for MySQL
+
+# Import/Export
+django-import-export>=2.0.0
+tablib>=3.0.0
+reportlab
+openpyxl
+
+# Authentication
+django-allauth  # Optional
+
+# Frontend
+django-tailwind  # Optional
+
+# Development
+python-dotenv
+django-debug-toolbar
+django-extensions
+six  # Backward compatibility

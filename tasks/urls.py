@@ -1,7 +1,10 @@
 from django.urls import path
-from .views import signup, user_login, user_logout, task_list, task_detail, task_create, task_update, task_delete
+from django.contrib.auth.decorators import login_required
+from . import views
+from .views import signup, user_login, user_logout, task_list, task_detail, task_create, task_update, task_delete, export_tasks
 
 urlpatterns = [
+    path('export/<str:format>/', login_required(views.export_tasks),name='export_tasks'),
     path('signup/', signup, name='signup'),
     path('login/', user_login, name='login'),
     path('logout/', user_logout, name='logout'),

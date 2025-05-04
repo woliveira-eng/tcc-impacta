@@ -21,6 +21,8 @@ from django.views.generic.base import RedirectView
 from django.views.generic.base import TemplateView
 
 
+
+
 urlpatterns = [
     path('accounts/login/', RedirectView.as_view(url='/login', permanent=True)),
     path('accounts/logout/', RedirectView.as_view(url='/logout/', permanent=True)),
@@ -28,4 +30,5 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('', include('tasks.urls')),
     path('signup/', TemplateView.as_view(template_name='registration/signup.html'), name='signup'),
+    path('tasks/', include('tasks.urls'))
 ]
